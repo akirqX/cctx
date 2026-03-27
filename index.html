@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Center Cópias | Pro Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #FF8C00;
+            --primary-glow: rgba(255, 140, 0, 0.4);
+            --bg: #0a0a0b;
+            --sidebar-bg: #0f0f12;
+            --card-bg: rgba(20, 20, 23, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --text: #ffffff;
+            --text-dim: #94a3b8;
+            --radius: 14px;
+            --transition: all 0.2s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND ANIMADO --- */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 140, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 140, 0, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 90%);
+        }
+
+        .blur-blob {
+            position: absolute;
+            width: 400px; height: 400px;
+            background: var(--primary-glow);
+            filter: blur(100px);
+            border-radius: 50%;
+            opacity: 0.15;
+            z-index: -1;
+            animation: float 20s infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 50px); }
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 270px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 3rem;
+            padding: 0 0.5rem;
+        }
+
+        .logo-img { height: 45px; width: auto; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            color: var(--text-dim);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: var(--primary);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main { flex: 1; padding: 2.5rem; overflow-y: auto; }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+        }
+
+        /* --- FORMULÁRIOS & SELECTS --- */
+        .field-group { margin-bottom: 1.5rem; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        
+        label { 
+            display: block;
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            /* Customização do Select */
+            appearance: none; 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23FF8C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 18px;
+        }
+
+        select option { background: #1a1a1c; color: white; }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+        }
+
+        .manual-price-field {
+            border: 1px dashed var(--primary);
+            background: rgba(255, 140, 0, 0.03);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        /* --- RESULTADOS --- */
+        .res-box {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .total-highlight {
+            background: linear-gradient(135deg, var(--primary), #e67e22);
+            padding: 2rem;
+            border-radius: 18px;
+            text-align: center;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 25px rgba(255, 140, 0, 0.2);
+        }
+
+        .btn-calc {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1.1rem;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas"></div>
+    <div class="blur-blob" style="top: 10%; right: 10%;"></div>
+
+    <aside class="sidebar">
+        <div class="logo-box">
+            <img src="logo.png" alt="TX" class="logo-img" onerror="this.src='https://ui-avatars.com/api/?name=TX&background=FF8C00&color=fff'">
+            <div style="line-height: 1;">
+                <h2 style="font-weight: 700; font-size: 0,5rem;">Center Cópias</h2>
+                <span style="font-size: 0.6rem; color: var(--primary); font-weight: 800;">PRO DASHBOARD</span>
+            </div>
+        </div>
+
+        <div class="nav-item active" onclick="changeModule('adesivos', this)"><i class="fas fa-tag"></i> Adesivos</div>
+        <div class="nav-item" onclick="changeModule('banners', this)"><i class="fas fa-scroll"></i> Banners</div>
+        <div class="nav-item" onclick="changeModule('placas', this)"><i class="fas fa-layer-group"></i> PVC / Placas</div>
+        <div class="nav-item" onclick="changeModule('impressoes', this)"><i class="fas fa-print"></i> Impressões</div>
+    </aside>
+
+    <main class="main">
+        <header style="margin-bottom: 2.5rem;">
+            <h1 id="view-title" style="font-size: 2rem; font-weight: 800;">Adesivos</h1>
+            <p style="color: var(--text-dim);">Cálculo preciso de custos e margens</p>
+        </header>
+
+        <div class="grid-layout">
+            <!-- PAINEL DE ENTRADA -->
+            <div class="card">
+                <div id="fields-container"></div>
+                
+                <div class="manual-price-field">
+                    <label>Preço Customizado (Opcional)</label>
+                    <input type="number" id="manual-price" placeholder="R$ Digite se quiser ignorar a tabela">
+                </div>
+
+                <button class="btn-calc" onclick="calculateAll()">GERAR ORÇAMENTO</button>
+            </div>
+
+            <!-- PAINEL DE RESULTADO -->
+            <div class="card">
+                <label>Detalhamento</label>
+                <div class="res-box"><span>Área de Produção</span> <span id="out-area">0.00 m²</span></div>
+                <div class="res-box"><span>Preço Unitário</span> <span id="out-unit">R$ 0,00</span></div>
+                <div class="res-box"><span>Subtotal</span> <span id="out-sub">R$ 0,00</span></div>
+                
+                <div class="total-highlight">
+                    <label style="color: rgba(255,255,255,0.8);">Valor Final ao Cliente</label>
+                    <h2 id="out-total" style="font-size: 3rem; font-weight: 900;">R$ 0,00</h2>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /**
+         * ⚙️ CONFIGURAÇÃO DE PREÇOS (Edite aqui facilmente)
+         * Altere os valores abaixo e o sistema atualizará sozinho.
+         */
+        const CONFIG_PRECOS = {
+            adesivos:   { padrao: 150.00, especial: 130.00, revenda: 110.00 },
+            banners:    { padrao: 100.00, especial: 85.00,  revenda: 75.00  },
+            placas:     { padrao: 250.00, especial: 210.00, revenda: 180.00 },
+            impressoes: { pb: 0.35, colorido: 1.50, encadernacao: 8.00 }
+        };
+
+        let currentModule = 'adesivos';
+
+        function changeModule(mod, el) {
+            currentModule = mod;
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('view-title').innerText = mod.charAt(0).toUpperCase() + mod.slice(1);
+            renderInputs();
+        }
+
+        function renderInputs() {
+            const container = document.getElementById('fields-container');
+            const prices = CONFIG_PRECOS[currentModule];
+            
+            let html = '';
+            
+            if(currentModule !== 'impressoes') {
+                html = `
+                    <div class="row">
+                        <div class="field-group"><label>Largura (cm)</label><input type="number" id="in-w" value="10"></div>
+                        <div class="field-group"><label>Altura (cm)</label><input type="number" id="in-h" value="10"></div>
+                    </div>
+                    <div class="field-group"><label>Quantidade</label><input type="number" id="in-q" value="100"></div>
+                    <div class="field-group">
+                        <label>Tabela de Preços (R$/m²)</label>
+                        <select id="in-price-table">
+                            <option value="${prices.padrao}">Padrão (R$ ${prices.padrao.toFixed(2)})</option>
+                            <option value="${prices.especial}">Especial (R$ ${prices.especial.toFixed(2)})</option>
+                            <option value="${prices.revenda}">Revenda (R$ ${prices.revenda.toFixed(2)})</option>
+                        </select>
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="field-group"><label>Nº de Páginas</label><input type="number" id="in-pags" value="50"></div>
+                    <div class="field-group">
+                        <label>Tipo de Impressão</label>
+                        <select id="in-print-type">
+                            <option value="${prices.pb}">Preto e Branco (R$ ${prices.pb.toFixed(2)})</option>
+                            <option value="${prices.colorido}">Colorido (R$ ${prices.colorido.toFixed(2)})</option>
+                        </select>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        const fmt = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
+        function calculateAll() {
+            let total = 0, area = 0, unit = 0;
+            const manual = parseFloat(document.getElementById('manual-price').value);
+
+            if(currentModule !== 'impressoes') {
+                const w = parseFloat(document.getElementById('in-w').value);
+                const h = parseFloat(document.getElementById('in-h').value);
+                const q = parseFloat(document.getElementById('in-q').value);
+                const tablePrice = parseFloat(document.getElementById('in-price-table').value);
+                
+                const finalPriceM2 = !isNaN(manual) && manual > 0 ? manual : tablePrice;
+                
+                area = ((w + 2) / 100 * (h + 2) / 100) * q; // +2cm margem segurança
+                total = area * finalPriceM2;
+                unit = total / q;
+            } else {
+                const pags = parseInt(document.getElementById('in-pags').value);
+                const tablePrice = parseFloat(document.getElementById('in-print-type').value);
+                
+                const finalPricePag = !isNaN(manual) && manual > 0 ? manual : tablePrice;
+                
+                total = (pags * finalPricePag) + CONFIG_PRECOS.impressoes.encadernacao;
+                unit = total / pags;
+            }
+
+            // Update UI
+            document.getElementById('out-area').innerText = area > 0 ? area.toFixed(3) + ' m²' : '---';
+            document.getElementById('out-unit').innerText = fmt(unit);
+            document.getElementById('out-sub').innerText = fmt(total);
+            document.getElementById('out-total').innerText = fmt(total);
+        }
+
+        // Init
+        renderInputs();
+    </script>
+</body>
+</html>
