@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Center Cópias | Orçamento Premium</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="shortcut icon" type="image/png" href="logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        :root {
+            --primary: #FF6B00;
+            --primary-dark: #E55A00;
+            --primary-light: #FF8533;
+            --primary-glow: rgba(255, 107, 0, 0.35);
+            --bg-dark: #050507;
+            --bg-card: rgba(18, 18, 24, 0.92);
+            --bg-sidebar: #0a0a0f;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-primary: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --text-muted: #71717A;
+            --shadow-glow: 0 0 20px rgba(255, 107, 0, 0.2);
+            --transition: all 0.2s ease;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 14px;
+        }
+
+        .bg-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .bg-gradient { position: absolute; inset: 0; background: radial-gradient(circle at 20% 30%, rgba(255, 107, 0, 0.08), transparent 60%), #050507; }
+        .bg-orb { position: absolute; width: 50vmax; height: 50vmax; background: radial-gradient(circle, rgba(255, 107, 0, 0.2), transparent 70%); top: -20%; right: -20%; filter: blur(100px); animation: float 25s infinite alternate; }
+        .bg-orb-2 { position: absolute; width: 40vmax; height: 40vmax; background: radial-gradient(circle, rgba(255, 107, 0, 0.1), transparent 70%); bottom: -10%; left: -10%; filter: blur(80px); animation: float2 20s infinite alternate; }
+        @keyframes float { from { transform: translate(0,0) scale(1); } to { transform: translate(-5%, 5%) scale(1.1); } }
+        @keyframes float2 { from { transform: translate(0,0) scale(1); } to { transform: translate(5%, -5%) scale(1.2); } }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.4));
+        }
+        .brand-text h2 {
+            font-size: 1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .brand-text span {
+            font-size: 0.55rem;
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .brand-badge {
+            background: rgba(255, 107, 0, 0.15);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 20px;
+            padding: 4px 8px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-left: auto;
+        }
+
+        .nav-label {
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 0.8rem 0.3rem;
+        }
+        .nav-item {
+            padding: 0.7rem 0.9rem;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), rgba(255, 107, 0, 0.05));
+            color: var(--primary);
+            border: 1px solid rgba(255, 107, 0, 0.25);
+        }
+        .nav-item i {
+            font-size: 1rem;
+            width: 22px;
+        }
+
+        /* Login Panel */
+        .login-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .login-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .login-header span {
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .auth-badge {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 800;
+        }
+        .auth-badge.guest { background: #1a1a1a; color: #666; }
+        .auth-badge.admin { background: rgba(255, 107, 0, 0.2); color: var(--primary); border: 1px solid rgba(255, 107, 0, 0.3); }
+        .auth-badge.employee { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+        
+        .login-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-glass);
+            padding: 0.7rem 0.8rem;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.8rem;
+            outline: none;
+            margin-bottom: 0.8rem;
+        }
+        .login-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+        }
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #000;
+            border: none;
+            padding: 0.7rem;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
+        }
+        .logout-btn {
+            width: 100%;
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            padding: 0.7rem;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-glass);
+        }
+        .contact-card {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.08), rgba(255, 107, 0, 0.02));
+            border-radius: 16px;
+            padding: 0.8rem;
+        }
+        .contact-title {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+        .pix-button {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(255, 107, 0, 0.05));
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            padding: 0.6rem;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+        }
+        .pix-button span {
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.7rem;
+            padding: 0.4rem 0;
+        }
+        .contact-link:hover {
+            color: var(--primary);
+        }
+        .hours {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.55rem;
+            margin-top: 0.5rem;
+        }
+        .dev {
+            text-align: center;
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid var(--border-glass);
+        }
+        .dev a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.55rem;
+        }
+        .dev a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .view.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control, .form-select {
+            width: 100%;
+            background: #0f0f14;
+            border: 1px solid var(--border-glass);
+            padding: 0.75rem 1rem;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF6B00' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        .form-select option {
+            background: #1a1a1f;
+            color: #fff;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+        }
+        
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            background: #0f0f14;
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            width: fit-content;
+        }
+        .qty-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+        }
+        .qty-btn:hover {
+            transform: scale(1.05);
+        }
+        .qty-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 55px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .admin-toggle {
+            margin-top: 1rem;
+            border: 1px dashed var(--border-glass);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .admin-toggle-header {
+            padding: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary);
+            font-size: 0.7rem;
+            font-weight: 800;
+            cursor: pointer;
+            background: rgba(255, 107, 0, 0.05);
+        }
+        .admin-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .admin-panel.open {
+            max-height: 80px;
+            padding: 0.7rem;
+        }
+        .admin-panel input {
+            width: 100%;
+            background: #0f0f14;
+            border: 1px solid var(--border-glass);
+            padding: 0.7rem;
+            border-radius: 12px;
+            color: #fff;
+        }
+        .admin-info {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            text-align: center;
+        }
+
+        .btn-calc {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #000;
+            border: none;
+            padding: 0.9rem;
+            border-radius: 18px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn-calc:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .result-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .result-main {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.12), rgba(255, 107, 0, 0.03));
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            padding: 1.2rem;
+            border-radius: 24px;
+            text-align: center;
+        }
+        .result-main span {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+        .result-value {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: monospace;
+        }
+        .result-date {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            padding: 0.8rem;
+            border-radius: 16px;
+        }
+        .stat-box span {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .stat-box strong {
+            font-size: 0.8rem;
+            font-family: monospace;
+            word-break: break-word;
+        }
+
+        .quick-actions {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.08), rgba(255, 107, 0, 0.02));
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            padding: 0.8rem;
+        }
+        .quick-actions-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+        }
+        .quick-action-buttons {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .quick-action-btn {
+            flex: 1;
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            padding: 0.6rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .quick-action-btn:hover {
+            background: rgba(255, 107, 0, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .info-box {
+            background: rgba(255, 107, 0, 0.05);
+            border-left: 3px solid var(--primary);
+            padding: 0.7rem;
+            border-radius: 14px;
+            font-size: 0.65rem;
+        }
+
+        /* Catalog */
+        .cat-filters {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+        .filter-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .filter-btn.active {
+            background: var(--primary);
+            color: #000;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #0f0f14;
+            border: 1px solid var(--border-glass);
+            border-radius: 30px;
+            padding: 0.4rem 0.8rem;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 0.3rem;
+            font-size: 0.75rem;
+            outline: none;
+            width: 180px;
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.2rem;
+        }
+        .cat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 1rem;
+            transition: var(--transition);
+        }
+        .cat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        .cat-card h3 {
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 0.5rem;
+        }
+        .cat-items {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .cat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .cat-item:last-child {
+            border: none;
+        }
+        .cat-item-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .cat-item-price {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.75rem;
+            background: rgba(255, 107, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .cat-category-icon {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 107, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--primary);
+            padding: 0.7rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 9999;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            .quick-action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-fx">
+        <div class="bg-gradient"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb-2"></div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://ui-avatars.com/api/?name=CC&background=FF6B00&color=000&bold=true&size=48'">
+            <div class="brand-text">
+                <h2>CENTER CÓPIAS</h2>
+                <span>ORÇAMENTO PREMIUM</span>
+            </div>
+            <div class="brand-badge">PRO</div>
+        </div>
+
+        <span class="nav-label"><i class="fas fa-compass"></i> Navegação</span>
+        <div class="nav-item active" onclick="nav('calc', this)"><i class="fas fa-calculator"></i><span>Orçamento</span></div>
+        <div class="nav-item" onclick="nav('cat', this)"><i class="fas fa-layer-group"></i><span>Catálogo</span></div>
+
+        <div class="login-panel">
+            <div class="login-header">
+                <span><i class="fas fa-shield-alt"></i> Acesso Restrito</span>
+                <div id="auth-badge" class="auth-badge guest">Convidado</div>
+            </div>
+            <div id="auth-login-area">
+                <input type="password" id="auth-password" class="login-input" placeholder="Digite sua senha" onkeypress="if(event.key==='Enter') attemptLogin()">
+                <button class="login-btn" onclick="attemptLogin()"><i class="fas fa-key"></i> ENTRAR</button>
+            </div>
+            <div id="auth-logout-area" style="display: none;">
+                <button class="logout-btn" onclick="logout()">SAIR DO SISTEMA <i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="contact-card">
+                <div class="contact-title"><i class="fas fa-bolt"></i> Contato Rápido</div>
+                <div class="pix-button" onclick="copyPix()">
+                    <span><i class="fab fa-pix"></i> 73 99903-7727</span>
+                    <i class="fas fa-copy"></i>
+                </div>
+                <a href="https://www.instagram.com/centercopiastx/" target="_blank" class="contact-link"><i class="fab fa-instagram"></i> @centercopiastx</a>
+                <a href="https://wa.me/5573999037727" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> (73) 99903-7727</a>
+                <div class="hours"><i class="fas fa-clock"></i> Seg-Sex: 8h-18h | Sáb: 8h-12h</div>
+            </div>
+            <div class="dev">
+                <a href="https://akirqx.github.io/curriculum/" target="_blank"><i class="fas fa-code"></i> DEV @DEAR.AKRX</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div id="view-calc" class="view active">
+            <div class="page-header">
+                <h1>Gerar Orçamento</h1>
+                <p>Cálculos precisos baseados em área e insumos reais</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Serviço</label>
+                        <select id="mat-type" class="form-select" onchange="renderLogic()"></select>
+                    </div>
+                    <div id="dynamic-inputs"></div>
+                    
+                    <div class="admin-toggle">
+                        <div class="admin-toggle-header" onclick="toggleAdminPanel()">
+                            <span><i class="fas fa-edit"></i> Ajuste Manual de Preço</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="admin-panel" id="admin-panel">
+                            <input type="number" id="manual-price" class="form-control" placeholder="Preço personalizado" disabled>
+                            <div class="admin-info" id="manual-info">Insira o valor por m² (para áreas) ou unitário (para outros)</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-calc" onclick="calculate()"><i class="fas fa-chart-line"></i> CALCULAR ORÇAMENTO</button>
+                </div>
+
+                <div class="result-area">
+                    <div class="result-main">
+                        <span>Investimento Total</span>
+                        <div class="result-value" id="out-val">R$ 0,00</div>
+                        <div class="result-date"><i class="far fa-calendar-alt"></i> <span id="current-date"></span></div>
+                    </div>
+                    <div class="result-grid">
+                        <div class="stat-box"><span>Especificação</span><strong id="out-area">-</strong></div>
+                        <div class="stat-box"><span>Valor Unitário</span><strong id="out-unit">R$ 0,00</strong></div>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="quick-actions-title"><i class="fas fa-bolt"></i> Finalizar Orçamento</div>
+                        <div class="quick-action-buttons">
+                            <div class="quick-action-btn" onclick="copyPix()"><i class="fab fa-pix"></i> Pix</div>
+                            <a href="#" id="whatsapp-link" target="_blank" class="quick-action-btn"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                            <div class="quick-action-btn" onclick="copyOrcamento()"><i class="fas fa-copy"></i> Copiar</div>
+                        </div>
+                    </div>
+                    <div class="info-box"><i class="fas fa-info-circle"></i> 50% de entrada para produção. Orçamentos válidos por 5 dias.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-cat" class="view">
+            <div class="page-header">
+                <h1>Catálogo Completo</h1>
+                <p>Tabela de referência com todos os produtos e serviços</p>
+            </div>
+            <div class="cat-filters">
+                <div class="filter-group" id="category-filters"></div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-catalog" placeholder="Buscar produto..." onkeyup="filterCatalog()">
+                </div>
+            </div>
+            <div id="cat-content" class="cat-grid"></div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span>Copiado!</span></div>
+
+    <script>
+        let userRole = 'guest';
+        let passwords = { admin: "admin123", employee: "func123" };
+        let currentOrcamento = { total: 0, unit: 0, desc: "", qty: 1 };
+        let currentFilter = "todos";
+        let currentSearch = "";
+        let currentProductKey = "";
+
+        const categoryGroups = {
+            "Adesivos": ["vinil", "banner", "lona", "placas", "adesivos_folha", "wind"],
+            "Impressos": ["apostilas", "fotos", "cartoes", "blocos", "rifas", "envelopes"],
+            "Personalizados": ["camisetas", "canecas", "copos", "bones", "bottons", "crachas"],
+            "Especiais": ["imas", "laser", "arte"]
+        };
+
+        const categoryIcons = {
+            vinil: "fa-sticky-note", banner: "fa-flag", lona: "fa-tarp", placas: "fa-th-large",
+            apostilas: "fa-book", fotos: "fa-camera", cartoes: "fa-id-card", camisetas: "fa-tshirt",
+            crachas: "fa-id-badge", blocos: "fa-copy", canecas: "fa-mug-hot", copos: "fa-glass-water",
+            bones: "fa-hat-cowboy", adesivos_folha: "fa-tag", imas: "fa-magnet", wind: "fa-wind",
+            envelopes: "fa-envelope", rifas: "fa-ticket", bottons: "fa-circle", laser: "fa-laser", arte: "fa-palette"
+        };
+
+        const DB = {
+            perda: 0.5,
+            products: {
+                vinil: { name: "Adesivo Vinil", category: "Adesivos", fields: "vinil", prices: { revenda: 120, desconto: 150, convencional: 180 }, min: { leitoso: 15, transparente: 20 }, unit: "m²", priceType: "area" },
+                banner: { name: "Banner", category: "Adesivos", fields: "area", prices: { padrao: 120 }, unit: "m²", priceType: "area" },
+                lona: { name: "Lona Pura", category: "Adesivos", fields: "area", prices: { padrao: 100 }, unit: "m²", priceType: "area" },
+                placas: { name: "Placas PVC", category: "Adesivos", fields: "area", prices: { padrao: 350 }, unit: "m²", priceType: "area" },
+                apostilas: { name: "Apostilas", category: "Impressos", fields: "apostila", prices: { pb: 0.5, color: 2.0 }, unit: "página", priceType: "unit" },
+                fotos: { name: "Fotos", category: "Impressos", fields: "foto", prices: { "Polaroid": 3, "10x15cm": 5, "13x18cm": 9, "15x20cm": 9, "20x25cm": 18, "24x30cm": 37, "30x40cm": 40, "A4": 8 }, unit: "un", priceType: "unit" },
+                cartoes: { name: "Cartões", category: "Impressos", fields: "cartao", prices: { "500 un (verniz)": 130, "1000 un (verniz)": 170, "500 un (localizado)": 145, "1000 un (localizado)": 195 }, unit: "un", priceType: "unit" },
+                camisetas: { name: "Camisetas", category: "Personalizados", fields: "camiseta", prices: { "Branca 1 estampa": 39, "Branca 2": 55, "Preta 1": 59, "Preta 2": 79 }, unit: "peça", priceType: "unit" },
+                crachas: { name: "Crachás", category: "Personalizados", fields: "cracha", prices: { "Somente frente": 12, "Frente e verso": 14, "Cordinha Simples": 4, "Cordinha Personalizada": 7.5 }, unit: "un", priceType: "unit" },
+                blocos: { name: "Blocos", category: "Impressos", fields: "bloco", prices: { "P&B A5": 35, "P&B A6": 25, "Color A5": 55, "Color A6": 45 }, unit: "bloco", priceType: "unit" },
+                canecas: { name: "Canecas", category: "Personalizados", fields: "caneca", prices: { "Branca": 35, "Colorida c/colher": 45, "Mágica": 50, "Vidro Fosca": 45 }, unit: "un", priceType: "unit" },
+                copos: { name: "Copos", category: "Personalizados", fields: "copo", prices: { "Canequinha": 6.5, "Long Drink": 7.5, "C/Canudo": 10.5 }, unit: "un", priceType: "unit" },
+                bones: { name: "Bonés", category: "Personalizados", fields: "bone", prices: { "1 un": 45, "5 un": 40, "10 un": 35, "20 un": 30, "50 un": 28 }, unit: "un", priceType: "unit" },
+                adesivos_folha: { name: "Adesivos A4", category: "Adesivos", fields: "simples", prices: { "Folha A4": 15 }, unit: "folha", priceType: "unit" },
+                imas: { name: "Ímãs", category: "Especiais", fields: "ima", prices: { "50x45mm (500)": 350, "50x45mm (1000)": 600, "50x90mm (500)": 495 }, unit: "kit", priceType: "unit" },
+                wind: { name: "Wind Banner", category: "Adesivos", fields: "wind", prices: { "P (1,90m)": 250, "M (2,50m)": 300, "G (3,00m)": 350, "GG (3,50m)": 395 }, unit: "un", priceType: "unit" },
+                envelopes: { name: "Envelopes", category: "Impressos", fields: "env", prices: { "250 un": 1100, "500 un": 1800 }, unit: "un", priceType: "unit" },
+                rifas: { name: "Rifas", category: "Impressos", fields: "rifa", prices: { "Avulsa": 0.3, "Acima 100": 0.25 }, unit: "folha", priceType: "unit" },
+                bottons: { name: "Bottons", category: "Personalizados", fields: "botton", prices: { "3,5cm": 7, "5,5cm": 10 }, unit: "un", priceType: "unit" },
+                laser: { name: "Gravação Laser", category: "Especiais", fields: "laser", prices: { "Gravação Simples": 40, "1 Taça": 75, "2 Taças": 120, "Na taça do cliente": 40 }, unit: "serviço", priceType: "unit" },
+                arte: { name: "Criação de Artes", category: "Especiais", fields: "arte", prices: { "Hora": 75, "Minuto": 1.25 }, unit: "minuto", priceType: "unit" }
+            }
+        };
+
+        function formatDate() {
+            const d = new Date();
+            return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+
+        function updateWhatsAppLink() {
+            const link = document.getElementById('whatsapp-link');
+            if(link && currentOrcamento.total > 0) {
+                const msg = `Olá! Gostaria de um orçamento:\n\n📋 *CENTER CÓPIAS*\n📦 ${currentOrcamento.desc}\n💰 Unitário: R$ ${currentOrcamento.unit.toFixed(2)}\n💵 Total: R$ ${currentOrcamento.total.toFixed(2)}\n📅 ${formatDate()}`;
+                link.href = `https://wa.me/5573999037727?text=${encodeURIComponent(msg)}`;
+            }
+        }
+
+        async function loadLogins() {
+            try {
+                const r = await fetch('https://raw.githubusercontent.com/akirqX/cctx/refs/heads/main/logins.json');
+                if(r.ok) passwords = await r.json();
+            } catch(e) { console.warn("Usando logins locais"); }
+        }
+
+        function attemptLogin() {
+            const pass = document.getElementById('auth-password').value;
+            const badge = document.getElementById('auth-badge');
+            if (pass === passwords.admin) { userRole = 'admin'; badge.className = 'auth-badge admin'; badge.textContent = 'Admin'; loginSuccess(); }
+            else if (pass === passwords.employee) { userRole = 'employee'; badge.className = 'auth-badge employee'; badge.textContent = 'Equipe'; loginSuccess(); }
+            else { showToast("Senha incorreta!", true); }
+        }
+
+        function loginSuccess() {
+            document.getElementById('auth-login-area').style.display = 'none';
+            document.getElementById('auth-logout-area').style.display = 'block';
+            document.getElementById('manual-price').disabled = false;
+            document.getElementById('auth-password').value = '';
+            showToast("Acesso liberado!");
+            renderLogic();
+            if(document.getElementById('view-cat').classList.contains('active')) renderCatalog();
+        }
+
+        function logout() {
+            userRole = 'guest';
+            document.getElementById('auth-badge').className = 'auth-badge guest';
+            document.getElementById('auth-badge').textContent = 'Convidado';
+            document.getElementById('auth-login-area').style.display = 'block';
+            document.getElementById('auth-logout-area').style.display = 'none';
+            document.getElementById('manual-price').disabled = true;
+            document.getElementById('manual-price').value = '';
+            renderLogic();
+            if(document.getElementById('view-cat').classList.contains('active')) renderCatalog();
+        }
+
+        function nav(v, el) {
+            document.querySelectorAll('.view').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(`view-${v}`).classList.add('active');
+            el.classList.add('active');
+            if(v === 'cat') renderCatalog();
+        }
+
+        function updateManualInfo() {
+            const key = document.getElementById('mat-type').value;
+            const p = DB.products[key];
+            const infoDiv = document.getElementById('manual-info');
+            if(p.priceType === 'area') {
+                infoDiv.innerHTML = '<i class="fas fa-ruler-combined"></i> Valor por METRO QUADRADO (R$/m²)';
+                infoDiv.style.color = '#FF6B00';
+            } else {
+                infoDiv.innerHTML = '<i class="fas fa-tag"></i> Valor por UNIDADE (R$/peça)';
+                infoDiv.style.color = '#71717A';
+            }
+        }
+
+        function renderLogic() {
+            const key = document.getElementById('mat-type').value;
+            currentProductKey = key;
+            const p = DB.products[key];
+            const container = document.getElementById('dynamic-inputs');
+            let html = '';
+
+            updateManualInfo();
+
+            if (p.fields === 'vinil') {
+                html = `<div class="input-row"><div class="form-group"><label class="form-label">Largura (cm)</label><input type="number" id="w" class="form-control" value="10" oninput="calculate()"></div><div class="form-group"><label class="form-label">Altura (cm)</label><input type="number" id="h" class="form-control" value="10" oninput="calculate()"></div></div>
+                    <div class="form-group"><label class="form-label">Substrato</label><select id="v-sub" class="form-select" onchange="calculate()"><option value="leitoso">Leitoso (Mín R$15)</option><option value="transparente">Transparente (Mín R$20)</option></select></div>
+                    <div class="form-group"><label class="form-label">Tabela</label><select id="v-tab" class="form-select" onchange="calculate()">${userRole !== 'guest' ? `<option value="revenda">Revenda R$120/m²</option><option value="desconto">Desconto R$150/m²</option>` : ''}<option value="convencional">Convencional R$180/m²</option></select></div>
+                    <div class="form-group"><label class="form-label">Quantidade</label><div id="qty-container"></div></div>`;
+            } else if (p.fields === 'area') {
+                html = `<div class="input-row"><div class="form-group"><label class="form-label">Largura (cm)</label><input type="number" id="w" class="form-control" value="60" oninput="calculate()"></div><div class="form-group"><label class="form-label">Altura (cm)</label><input type="number" id="h" class="form-control" value="90" oninput="calculate()"></div></div>
+                    <div class="form-group"><label class="form-label">Quantidade</label><div id="qty-container"></div></div>`;
+            } else if (p.fields === 'apostila') {
+                html = `<div class="form-group"><label class="form-label">Nº de Páginas</label><input type="number" id="v-pg" class="form-control" value="50" oninput="calculate()"></div>
+                    <div class="form-group"><label class="form-label">Tipo</label><select id="v-color" class="form-select" onchange="calculate()"><option value="pb">Preto & Branco</option><option value="color">Colorido</option></select></div>
+                    <div class="form-group"><label class="form-label">Quantidade</label><div id="qty-container"></div></div>`;
+            } else if (p.fields === 'arte') {
+                html = `<div class="form-group"><label class="form-label">Tempo (minutos)</label><div id="qty-container"></div></div>`;
+            } else {
+                html = `<div class="form-group"><label class="form-label">Opção</label><select id="v-opt" class="form-select" onchange="calculate()">${Object.entries(p.prices).map(([k, v]) => `<option value="${v}">${k} - R$ ${v}</option>`).join('')}</select></div>
+                    <div class="form-group"><label class="form-label">Quantidade</label><div id="qty-container"></div></div>`;
+            }
+            container.innerHTML = html;
+            const qtyContainer = document.getElementById('qty-container');
+            if(qtyContainer) qtyContainer.innerHTML = `<div class="qty-control"><button class="qty-btn" onclick="changeQty(-1)">-</button><input type="number" id="q" value="1" min="1" class="qty-input" oninput="calculate()"><button class="qty-btn" onclick="changeQty(1)">+</button></div>`;
+            calculate();
+        }
+        
+        function changeQty(d) { 
+            const i = document.getElementById('q'); 
+            if(i) { i.value = Math.max(1, parseInt(i.value) + d); calculate(); }
+        }
+
+        function calculate() {
+            const key = document.getElementById('mat-type').value;
+            const p = DB.products[key];
+            const q = parseInt(document.getElementById('q')?.value || 1);
+            const manualPrice = parseFloat(document.getElementById('manual-price').value);
+            let total = 0, unit = 0, desc = "";
+            const f = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            if (p.fields === 'vinil') {
+                const w = (parseFloat(document.getElementById('w').value) + DB.perda) / 100;
+                const h = (parseFloat(document.getElementById('h').value) + DB.perda) / 100;
+                const tab = document.getElementById('v-tab').value;
+                const sub = document.getElementById('v-sub').value;
+                const areaTotal = w * h * q;
+                
+                let precoM2;
+                if (!isNaN(manualPrice) && manualPrice > 0 && userRole !== 'guest') {
+                    precoM2 = manualPrice;
+                    desc = `${areaTotal.toFixed(3)} m² de Vinil ${sub === 'leitoso' ? 'Leitoso' : 'Transparente'} (Preço manual: R$ ${manualPrice}/m²)`;
+                } else {
+                    precoM2 = p.prices[tab];
+                    desc = `${areaTotal.toFixed(3)} m² de Vinil ${sub === 'leitoso' ? 'Leitoso' : 'Transparente'}`;
+                }
+                
+                const precoPorArea = areaTotal * precoM2;
+                total = Math.max(precoPorArea, p.min[sub]);
+                unit = total / q;
+                if (!isNaN(manualPrice) && manualPrice > 0 && userRole !== 'guest') desc += ` (Preço manual: R$ ${manualPrice}/m²)`;
+            } 
+            else if (p.fields === 'area') {
+                const w = (parseFloat(document.getElementById('w').value) + DB.perda) / 100;
+                const h = (parseFloat(document.getElementById('h').value) + DB.perda) / 100;
+                const areaTotal = w * h * q;
+                
+                if (!isNaN(manualPrice) && manualPrice > 0 && userRole !== 'guest') {
+                    unit = areaTotal * manualPrice / q;
+                    total = unit * q;
+                    desc = `${areaTotal.toFixed(2)} m² total (Preço manual: R$ ${manualPrice}/m²)`;
+                } else {
+                    unit = w * h * p.prices.padrao;
+                    total = unit * q;
+                    desc = `${(w * h * q).toFixed(2)} m² total`;
+                }
+            }
+            else if (p.fields === 'apostila') {
+                const pgs = parseInt(document.getElementById('v-pg').value);
+                const price = document.getElementById('v-color').value === 'pb' ? p.prices.pb : p.prices.color;
+                unit = pgs * price;
+                total = unit * q;
+                desc = `${pgs} páginas - ${q} cópia(s)`;
+                
+                if (!isNaN(manualPrice) && manualPrice > 0 && userRole !== 'guest') {
+                    unit = manualPrice;
+                    total = unit * q;
+                    desc += ` (Preço manual: R$ ${manualPrice}/unidade)`;
+                }
+            }
+            else if (p.fields === 'arte') {
+                if (!isNaN(manualPrice) && manualPrice > 0 && userRole !== 'guest') {
+                    unit = manualPrice;
+                    total = unit;
+                    desc = `${q} minutos (Preço manual: R$ ${manualPrice}/minuto)`;
+                } else {
+                    unit = q * p.prices.minuto;
+                    total = unit;
+                    desc = `${q} minutos de criação`;
+                }
+            }
+            else {
+                if (!isNaN(manualPrice) && manualPrice > 0 && userRole !== 'guest') {
+                    unit = manualPrice;
+                    total = unit * q;
+                    desc = `${q} unidade(s) (Preço manual: R$ ${manualPrice}/unidade)`;
+                } else {
+                    unit = parseFloat(document.getElementById('v-opt').value);
+                    total = unit * q;
+                    desc = `${q} unidade(s)`;
+                }
+            }
+
+            currentOrcamento = { total, unit, desc, qty: q };
+            document.getElementById('out-val').textContent = f(total);
+            document.getElementById('out-unit').textContent = f(unit);
+            document.getElementById('out-area').textContent = desc;
+            document.getElementById('current-date').textContent = formatDate();
+            updateWhatsAppLink();
+        }
+
+        function copyOrcamento() {
+            const text = `📋 ORÇAMENTO CENTER CÓPIAS\n\n📦 ${currentOrcamento.desc}\n💰 Unitário: R$ ${currentOrcamento.unit.toFixed(2)}\n💵 Total: R$ ${currentOrcamento.total.toFixed(2)}\n📅 ${formatDate()}\n\n✅ Válido por 5 dias\n📍 (73) 99903-7727`;
+            navigator.clipboard.writeText(text);
+            showToast("Orçamento copiado!");
+        }
+
+        function renderCatalog() {
+            const container = document.getElementById('cat-content');
+            const filtersHtml = `<button class="filter-btn ${currentFilter === 'todos' ? 'active' : ''}" onclick="setFilter('todos')">Todos</button>${Object.keys(categoryGroups).map(cat => `<button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat}')">${cat}</button>`).join('')}`;
+            document.getElementById('category-filters').innerHTML = filtersHtml;
+            
+            let filtered = Object.entries(DB.products);
+            if(currentFilter !== 'todos') filtered = filtered.filter(([k, p]) => p.category === currentFilter);
+            if(currentSearch) filtered = filtered.filter(([k, p]) => p.name.toLowerCase().includes(currentSearch.toLowerCase()));
+            
+            container.innerHTML = filtered.map(([key, p]) => {
+                let items = '';
+                Object.entries(p.prices).forEach(([name, val]) => {
+                    const isSpecial = (key === 'vinil' && (name === 'revenda' || name === 'desconto'));
+                    if (isSpecial && userRole === 'guest') {
+                        items += `<div class="cat-item"><span class="cat-item-name">${name}</span><span class="cat-item-price"><i class="fas fa-lock"></i></span></div>`;
+                    } else {
+                        let priceDisplay = `R$ ${val}`;
+                        if(p.unit === 'm²') priceDisplay += `/m²`;
+                        items += `<div class="cat-item"><span class="cat-item-name">${name}</span><span class="cat-item-price">${priceDisplay}</span></div>`;
+                    }
+                });
+                const iconClass = categoryIcons[key] || "fa-box";
+                return `<div class="cat-card"><h3><div class="cat-category-icon"><i class="fas ${iconClass}"></i></div> ${p.name}</h3><div class="cat-items">${items}</div></div>`;
+            }).join('');
+        }
+
+        function setFilter(cat) { currentFilter = cat; renderCatalog(); }
+        function filterCatalog() { currentSearch = document.getElementById('search-catalog').value; renderCatalog(); }
+
+        function toggleAdminPanel() {
+            if(userRole === 'guest') { showToast("Faça login primeiro", true); return; }
+            document.getElementById('admin-panel').classList.toggle('open');
+        }
+        
+        function copyPix() { navigator.clipboard.writeText('73999037727'); showToast("PIX copiado! 73 99903-7727"); }
+        function showToast(msg, err=false) { 
+            const t = document.getElementById('toast'); 
+            t.querySelector('span').innerHTML = msg;
+            t.style.background = err ? '#f44' : '#1a1a1f';
+            t.classList.add('show'); 
+            setTimeout(() => t.classList.remove('show'), 2500); 
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLogins();
+            const sel = document.getElementById('mat-type');
+            sel.innerHTML = Object.entries(DB.products).map(([k, v]) => `<option value="${k}">${v.name}</option>`).join('');
+            renderLogic();
+        });
+    </script>
+</body>
+</html>
